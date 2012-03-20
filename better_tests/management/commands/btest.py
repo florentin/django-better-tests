@@ -23,7 +23,7 @@ class Command(BaseCommand):
         verbosity = int(options.get('verbosity', 1))
         interactive = options.get('interactive', True)
 
-        settings.TEST_RUNNER = 'better.tests.runners.TestSuiteRunner'
+        settings.TEST_RUNNER = 'better_tests.runners.TestSuiteRunner'
 
         test_runner = get_runner(settings)(verbosity=verbosity, interactive=interactive)
         
