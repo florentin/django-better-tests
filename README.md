@@ -8,7 +8,11 @@ A testing app for Django.
 * add the "TEST_NAME" to the DATABASES["default"] dictionary
 
 ## Usage
-$ python manage.py btest
+* this will create and destroy the test database
+$ python manage.py btest api.ApiTests.test_create --setupdbs --teardowndbs
+
+* this will ignore the creation/deletion process of the test database
+$ python manage.py btest api.ApiTests.test_create
 
 ## How to keep the test database
 * create a file tests/utils.py with the following class
