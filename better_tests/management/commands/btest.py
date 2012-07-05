@@ -1,32 +1,27 @@
-"""
-Original code and ideas from http://www.djangosnippets.org/snippets/1318/
-Thanks crucialfelix
-"""
-from django.core.management.base import BaseCommand
-from optparse import make_option
 import sys
+from optparse import make_option, OptionParser
+from django.conf import settings
 
-class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('--noinput', action='store_false', dest='interactive', default=True,
-            help='Tells Django to NOT prompt the user for input of any kind.'),
+try:
+    from south.management.commands import test
+except ImportError:
+    from django.core.management.commands import test
+
+class Command(test.Command):
+    option_list = test.Command.option_list + (
+        make_option('--teardowndbs',
+            action='store_true', dest='teardowndbs', default=False,
+            help='Tells Django weather to teardown the databases.'),
+        make_option('--setupdbs',
+            action='store_true', dest='setupdbs', default=False,
+            help='Tells Django weather to setup the databases.') 
     )
-    help = 'Runs the test suite, creating a test db IF NEEDED and NOT DESTROYING the test db afterwards.  Otherwise operates exactly as does test.'
-    args = '[appname ...]'
-
-    requires_model_validation = False
-
+    
+    # TODO: remove the test_runner option
+    
     def handle(self, *test_labels, **options):
-        from django.conf import settings
-        from django.test.utils import get_runner
+        if 'test_runner' in options:
+            sys.exit('You are not allowed to use the "test_runner" option with the "btest" command.')
+        options['testrunner'] = 'better_tests.runners.TestSuiteRunner'
+        super(Command, self).handle(*test_labels, **options)
 
-        verbosity = int(options.get('verbosity', 1))
-        interactive = options.get('interactive', True)
-
-        settings.TEST_RUNNER = 'better_tests.runners.TestSuiteRunner'
-
-        test_runner = get_runner(settings)(verbosity=verbosity, interactive=interactive)
-        
-        failures = test_runner.run_tests(test_labels)
-        if failures:
-            sys.exit(failures)
