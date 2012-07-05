@@ -9,3 +9,17 @@ A testing app for Django.
 
 ## Usage
 $ python manage.py btest
+
+## How to keep the test database
+* create a file tests/utils.py with the following class
+class TestMixin(object):
+    fixtures = []
+    
+    def setUp(self):
+        pass
+    
+    def tearDown(self):
+        pass
+
+* use this mixin in your TestCase definition
+
