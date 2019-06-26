@@ -27,3 +27,5 @@ class TestMixin(object):
 
 * use this mixin in your TestCase definition
 
+
+new line
